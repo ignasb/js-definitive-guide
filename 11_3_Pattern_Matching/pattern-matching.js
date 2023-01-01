@@ -95,12 +95,17 @@
 * 11.3.2
 ********
 
-Strings support methods - search, replace, match, matchAll, split
+String supported regular expression methods - search, replace, match, matchAll, split
 */
 
 function main() {
   search();
   replace();
+  match();
+  matchAll();
+  split();
+
+  regexOne();
 }
 
 main();
@@ -128,4 +133,116 @@ function replace() {
     "JavaScript",
   );
   console.log(text);
+
+  let quote = /"([^"]*)"/g;
+  const replacedQuotes = 'He said "stop"'.replace(quote, "<<$1>>");
+  console.log(replacedQuotes);
+
+  let namedQuote = /"(?<quotedText>[^"]*)"/g;
+  const replacedQuotesNamed = 'He said "stop"'.replace(namedQuote, "<<$1>>");
+  console.log(replacedQuotesNamed);
+
+  let s = "15 times 15 is 225";
+  const octodecimal = s.replace(/\d+/gu, (n) => parseInt(n).toString(16));
+  console.log(octodecimal);
+}
+
+function match() {
+  /* Takes regular expression as its only argument(or converts its argument to a regular expression by
+    passing it to the RegExp() constructor) and returns an array that contains the results of the match,
+    or null if no match is found. If the regular expression has the g flag set, the method returns
+    an array of all matches that appear in the string.
+  */
+
+  const simpleMatch = "7 plus 8 equals 15".match(/\d+/);
+  console.log(simpleMatch);
+
+  const simpleGlobalMatch = "7 plus 8 equals 15".match(/\d+/g);
+  console.log(simpleGlobalMatch);
+
+  const sampleText = "Visit my blog at http://www.example.com/~test";
+  const groupedUrlRegExp = /(?<protocol>\w+):\/\/(?<host>[\w.]+)\/(?<path>\S*)/;
+  const match = sampleText.match(groupedUrlRegExp);
+  console.log(match);
+}
+
+function matchAll() {
+  /* Expects RegExp with the g flag set. Instead of returning an array of matching substring like match()
+    does, however, it returns an iterator that yields the kind of match objects that match() returns
+    when used with a non-global RegExp.
+  */
+
+  const digitsOnlyRegExp = /\d+/g;
+  const text = "1 AB 2 CD 3 EF 4 GH";
+  for (let m of text.matchAll(digitsOnlyRegExp)) {
+    console.log(`Found '${m[0]} at index ${m.index}`);
+  }
+}
+
+function split() {
+  /* Breaks the string on which it is cllaed into an array of substring, using the argument as a separator.
+    It can be used with a string argument or reg exp.
+  */
+  console.log("123,456,789".split(","));
+  console.log("1, 2, 3, \n4, 5".split(/\s*,\s*/));
+}
+
+function regexOne() {
+  problemOne();
+  problemTwo();
+
+  function problemOne() {
+    // Problem 1: Matching a decimal numbers.
+    const decRegExp = /^-?\d+(\.|,)?\d+e?\d+\.?(\d+)?$/;
+    const numbers = [
+      "3.14528",
+      "-255.34",
+      "128",
+      "1.9e10",
+      "123,340.00",
+      "720p",
+    ];
+
+    // Do not print "720p";
+    const ans1 = numbers.filter((n) => n.match(decRegExp));
+    console.log(ans1);
+  }
+
+  function problemTwo() {
+    /*
+      Capture	415-555-1234	415
+      Capture	650-555-2345	650
+      Capture	(416)555-3456	416
+      Capture	202 555 4567	202
+      Capture	4035555678	403
+      Capture	1 416 555 9292	416
+    */
+    // Matching phone numbers
+    const telNumbers = [
+      "415-555-1234",
+      "650-555-2345",
+      "(416)555-3456",
+      "202 555 4567",
+      "4035555678",
+      "1 416 555 9292",
+    ];
+
+    const phoneRegExp = /\(?(\d{3})\)?(\s|-)?\d{3}(\s|-)?\d{4}/;
+    telNumbers.forEach((telNumber) => {
+      console.log(telNumber.match(phoneRegExp));
+    });
+  }
+
+  function problemThree() {
+    /*
+    Task	Text	Capture Groups
+    Capture	tom@hogwarts.com	tom	To be completed
+    Capture	tom.riddle@hogwarts.com	tom.riddle	To be completed
+    Capture	tom.riddle+regexone@hogwarts.com	tom.riddle	To be completed
+    Capture	tom@hogwarts.eu.com	tom	To be completed
+    Capture	potter@hogwarts.com	potter	To be completed
+    Capture	harry@hogwarts.com	harry	To be completed
+    Capture	hermione+regexone@hogwarts.com	hermione
+    */
+  }
 }
